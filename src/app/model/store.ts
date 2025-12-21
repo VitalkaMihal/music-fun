@@ -1,15 +1,12 @@
+import { playlistsApi } from '@/features/playlists/api/playlistsApi.ts'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
-import { baseApi } from '@/app/api/baseApi.ts'
-
 export const store = configureStore({
   reducer: {
-    [baseApi.reducerPath]: baseApi.reducer,
+    [playlistsApi.reducerPath]: playlistsApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(playlistsApi.middleware),
 })
-
-export type RootState = ReturnType<typeof store.getState>
 
 setupListeners(store.dispatch)
