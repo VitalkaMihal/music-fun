@@ -1,25 +1,23 @@
-import s from "@/features/playlists/ui/PlaylistItem/PlaylistItem.module.css"
+import s from "./PlaylistCover.module.css"
 import {
   useDeletePlaylistCoverMutation,
   useUploadPlaylistCoverMutation,
 } from "@/features/playlists/api/playlistsApi.ts"
 import defaultCover from "@/assets/images/default-playlist-cover.png"
 import type { ChangeEvent } from "react"
-import type { PlaylistData } from "@/features/playlists/api/playlistsApi.types.ts"
+import type { Images } from "@/common/types"
 
 type Props = {
-  playlist: PlaylistData
+  playlistId: string
+  images: Images
 }
 
-export const PlaylistCover = ({ playlist }: Props) => {
+export const PlaylistCover = ({ playlistId, images }: Props) => {
   const [uploadPlaylistCover] = useUploadPlaylistCoverMutation()
   const [deletePlaylistCover] = useDeletePlaylistCoverMutation()
 
-  const originalCover = playlist.attributes.images.main.find((img) => img.type === "original")
+  const originalCover = images.main.find((img) => img.type === "original")
   const src = originalCover ? originalCover.url : defaultCover
-
-  const deleteCoverHandler = () => deletePlaylistCover({ playlistId: playlist.id })
-
   const uploadCoverHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"]
     const maxSize = 1024 * 1024
@@ -37,8 +35,11 @@ export const PlaylistCover = ({ playlist }: Props) => {
       return
     }
 
-    uploadPlaylistCover({ playlistId: playlist.id, file })
+    uploadPlaylistCover({ playlistId, file })
   }
+
+  const deleteCoverHandler = () => deletePlaylistCover({ playlistId })
+
   return (
     <div>
       <img src={src} alt="cover" width={"240px"} className={s.cover} />
