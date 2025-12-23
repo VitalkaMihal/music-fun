@@ -1,14 +1,15 @@
-import { useDeletePlaylistMutation, useFetchPlaylistsQuery } from '@/features/playlists/api/playlistsApi.ts'
-import type { PlaylistData, UpdatePlaylistArgs } from '@/features/playlists/api/playlistsApi.types.ts'
-import { CreatePlaylistForm } from '@/features/playlists/ui/CreatePlaylistForm/CreatePlaylistForm.tsx'
-import { EditPlaylistForm } from '@/features/playlists/ui/EditPlaylistForm/EditPlaylistForm.tsx'
-import { PlaylistItem } from '@/features/playlists/ui/PlaylistItem/PlaylistItem.tsx'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import s from './PlaylistsPage.module.css'
+import { useDeletePlaylistMutation, useFetchPlaylistsQuery } from "@/features/playlists/api/playlistsApi.ts"
+import type { PlaylistData, UpdatePlaylistArgs } from "@/features/playlists/api/playlistsApi.types.ts"
+import { CreatePlaylistForm } from "@/features/playlists/ui/CreatePlaylistForm/CreatePlaylistForm.tsx"
+import { EditPlaylistForm } from "@/features/playlists/ui/EditPlaylistForm/EditPlaylistForm.tsx"
+import { PlaylistItem } from "@/features/playlists/ui/PlaylistItem/PlaylistItem.tsx"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import s from "./PlaylistsPage.module.css"
 
 export const PlaylistsPage = () => {
-  const { data } = useFetchPlaylistsQuery()
+  const [search, setSearch] = useState("")
+  const { data, isLoading } = useFetchPlaylistsQuery({ search })
 
   const [playlistId, setPlaylistId] = useState<string | null>(null)
   const { register, handleSubmit, reset } = useForm<UpdatePlaylistArgs>()
@@ -16,7 +17,7 @@ export const PlaylistsPage = () => {
   const [deletePlaylist] = useDeletePlaylistMutation()
 
   const deletePlaylistHandler = (playlistId: string) => {
-    if (confirm('Are you sure you want to delete the playlist?')) {
+    if (confirm("Are you sure you want to delete the playlist?")) {
       deletePlaylist(playlistId)
     }
   }
@@ -38,7 +39,13 @@ export const PlaylistsPage = () => {
     <div className={s.container}>
       <h1>Playlists page</h1>
       <CreatePlaylistForm />
+      <input
+        type="search"
+        placeholder={"Search playlist by title"}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
       <div className={s.items}>
+        {!data?.data.length && !isLoading && <h2>Playlists not found</h2>}
         {data?.data.map((playlist) => {
           const isEditing = playlist.id === playlistId
 
