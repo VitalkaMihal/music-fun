@@ -3,7 +3,7 @@ import { CreatePlaylistForm } from "@/features/playlists/ui/CreatePlaylistForm/C
 import { type ChangeEvent, useState } from "react"
 import s from "./PlaylistsPage.module.css"
 import { useDebounceValue } from "@/common/hooks"
-import { Pagination } from "@/common/components"
+import { LinearProgress, Pagination } from "@/common/components"
 import { PlaylistsList } from "@/features/playlists/ui/PlaylistsList/PlaylistsList.tsx"
 
 export const PlaylistsPage = () => {
@@ -12,7 +12,11 @@ export const PlaylistsPage = () => {
   const [pageSize, setPageSize] = useState(2)
 
   const debounceSearch = useDebounceValue(search)
-  const { data, isLoading } = useFetchPlaylistsQuery({ search: debounceSearch, pageNumber: currentPage, pageSize })
+  const { data, isLoading, isFetching } = useFetchPlaylistsQuery({
+    search: debounceSearch,
+    pageNumber: currentPage,
+    pageSize,
+  })
 
   const changePageSizeHandler = (size: number) => {
     setPageSize(size)
@@ -24,8 +28,12 @@ export const PlaylistsPage = () => {
     setCurrentPage(1)
   }
 
+  if (isLoading) return <h1>Skeleton loader...</h1>
+
   return (
     <div className={s.container}>
+      {isFetching && <LinearProgress />}
+
       <h1>Playlists page</h1>
       <CreatePlaylistForm />
       <input type="search" placeholder={"Search playlist by title"} onChange={searchPlaylistHandler} />
