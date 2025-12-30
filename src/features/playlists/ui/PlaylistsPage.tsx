@@ -33,7 +33,7 @@ export const PlaylistsPage = () => {
   return (
     <div className={s.container}>
       <h1>Playlists page</h1>
-      <CreatePlaylistForm />
+      <CreatePlaylistForm setCurrentPage={setCurrentPage} />
       <input type="search" placeholder={"Search playlist by title"} onChange={searchPlaylistHandler} />
       <PlaylistsList playlists={data?.data || []} isPlaylistLoading={isLoading} />
       <Pagination
