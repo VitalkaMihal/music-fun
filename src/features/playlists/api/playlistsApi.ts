@@ -25,19 +25,38 @@ export const playlistsApi = baseApi.injectEndpoints({
       }),
       updatePlaylist: build.mutation<void, { playlistId: string; body: UpdatePlaylistArgs }>({
         query: ({ playlistId, body }) => ({ method: "put", url: `playlists/${playlistId}`, body }),
-        onQueryStarted: async ({ playlistId, body }, { dispatch, queryFulfilled }) => {
-          const patchResult = dispatch(
-            playlistsApi.util.updateQueryData("fetchPlaylists", { pageNumber: 1, pageSize: 2, search: "" }, (state) => {
-              const index = state.data.findIndex((playlist) => playlist.id === playlistId)
-              if (index !== -1) {
-                state.data[index].attributes = { ...state.data[index].attributes, ...body }
-              }
-            }),
-          )
+        onQueryStarted: async ({ playlistId, body }, { dispatch, queryFulfilled, getState }) => {
+          const args = playlistsApi.util.selectCachedArgsForQuery(getState(), "fetchPlaylists")
+
+          const patchResults: any[] = []
+
+          args.forEach((arg) => {
+            patchResults.push(
+              dispatch(
+                playlistsApi.util.updateQueryData(
+                  "fetchPlaylists",
+                  {
+                    pageNumber: arg.pageNumber,
+                    pageSize: arg.pageSize,
+                    search: arg.search,
+                  },
+                  (state) => {
+                    const index = state.data.findIndex((playlist) => playlist.id === playlistId)
+                    if (index !== -1) {
+                      state.data[index].attributes = { ...state.data[index].attributes, ...body }
+                    }
+                  },
+                ),
+              ),
+            )
+          })
+
           try {
             await queryFulfilled
           } catch {
-            patchResult.undo()
+            patchResults.forEach((patchResult) => {
+              patchResult.undo()
+            })
           }
         },
         invalidatesTags: ["Playlist"],
