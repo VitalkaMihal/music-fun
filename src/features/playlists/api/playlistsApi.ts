@@ -25,6 +25,21 @@ export const playlistsApi = baseApi.injectEndpoints({
       }),
       updatePlaylist: build.mutation<void, { playlistId: string; body: UpdatePlaylistArgs }>({
         query: ({ playlistId, body }) => ({ method: "put", url: `playlists/${playlistId}`, body }),
+        onQueryStarted: async ({ playlistId, body }, { dispatch, queryFulfilled }) => {
+          const patchResult = dispatch(
+            playlistsApi.util.updateQueryData("fetchPlaylists", { pageNumber: 1, pageSize: 2, search: "" }, (state) => {
+              const index = state.data.findIndex((playlist) => playlist.id === playlistId)
+              if (index !== -1) {
+                state.data[index].attributes = { ...state.data[index].attributes, ...body }
+              }
+            }),
+          )
+          try {
+            await queryFulfilled
+          } catch {
+            patchResult.undo()
+          }
+        },
         invalidatesTags: ["Playlist"],
       }),
       uploadPlaylistCover: build.mutation<Images, { playlistId: string; file: File }>({

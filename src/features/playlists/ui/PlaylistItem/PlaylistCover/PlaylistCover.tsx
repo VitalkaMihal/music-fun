@@ -6,7 +6,7 @@ import {
 import defaultCover from "@/assets/images/default-playlist-cover.png"
 import type { ChangeEvent } from "react"
 import type { Images } from "@/common/types"
-import { errorToast } from "@/common/utils/errorToast.ts"
+import { errorToast } from "@/common/utils"
 
 type Props = {
   playlistId: string
