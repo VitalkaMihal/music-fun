@@ -8,10 +8,10 @@ import { useForm } from "react-hook-form"
 
 type Props = {
   playlists: PlaylistData[]
-  isPlaylistLoading: boolean
+  isPlaylistsLoading: boolean
 }
 
-export const PlaylistsList = ({ playlists, isPlaylistLoading }: Props) => {
+export const PlaylistsList = ({ playlists, isPlaylistsLoading }: Props) => {
   const [playlistId, setPlaylistId] = useState<string | null>(null)
   const { register, handleSubmit, reset } = useForm<UpdatePlaylistArgs>()
 
@@ -38,7 +38,7 @@ export const PlaylistsList = ({ playlists, isPlaylistLoading }: Props) => {
 
   return (
     <div className={s.items}>
-      {!playlists.length && !isPlaylistLoading && <h2>Playlists not found</h2>}
+      {!playlists.length && !isPlaylistsLoading && <h2>Playlists not found</h2>}
       {playlists.map((playlist) => {
         const isEditing = playlist.id === playlistId
 
