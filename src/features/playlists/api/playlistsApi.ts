@@ -2,6 +2,7 @@ import type {
   CreatePlaylistArgs,
   FetchPlaylistsArgs,
   PlaylistCreatedEvent,
+  PlaylistUpdatedEvent,
   UpdatePlaylistArgs,
 } from "@/features/playlists/api/playlistsApi.types.ts"
 import { baseApi } from "@/app/api/baseApi.ts"
