@@ -33,7 +33,7 @@ export const PlaylistsPage = () => {
     <div className={s.container}>
       <h1>Playlists page</h1>
       <input type="search" placeholder={"Search playlist by title"} onChange={searchPlaylistHandler} />
-      <PlaylistsList playlists={data?.data || []} isPlaylistLoading={isLoading} />
+      <PlaylistsList playlists={data?.data || []} isPlaylistsLoading={isLoading} />
       <Pagination
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
